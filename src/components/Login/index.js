@@ -1,4 +1,5 @@
 import {useState} from 'react'
+import {Redirect} from 'react-router-dom'
 import Cookies from 'js-cookie'
 import {
   MainContainer,
@@ -23,31 +24,6 @@ const Login = props => {
   const [showPassword, setShowPassword] = useState(false)
   const [isError, setIsError] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
-
-  const renderUserName = () => (
-    <InputContainer>
-      <Label htmlFor="username">USERNAME</Label>
-      <Input
-        value={username}
-        onChange={e => setUsername(e.target.value)}
-        placeholder="Username"
-        type="text"
-        id="username"
-      />
-    </InputContainer>
-  )
-
-  const renderPassword = () => (
-    <InputContainer>
-      <Label htmlFor="password">PASSWORD</Label>
-      <Input
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-        placeholder="Password"
-        type={showPassword ? 'text' : 'password'}
-      />
-    </InputContainer>
-  )
 
   const onLoginSuccess = jwtToken => {
     Cookies.set('jwt_token', jwtToken, {expires: 30})
@@ -85,37 +61,89 @@ const Login = props => {
     verifyUserDetails(userData)
   }
 
-  const renderShowPassword = () => (
-    <ShowPassContainer>
-      <CheckBox
-        onChange={() => setShowPassword(prev => !prev)}
-        id="checkbox"
-        type="checkbox"
-      />
-      <ShowPassText htmlFor="checkbox">Show Password</ShowPassText>
-    </ShowPassContainer>
-  )
-
-  const renderFormItems = () => (
-    <FormContainer onSubmit={onSubmit}>
-      {renderUserName()}
-      {renderPassword()}
-      {renderShowPassword()}
-      <LoginButton type="submit">Login</LoginButton>
-      {isError && <ErrorMsg>*{errorMsg}</ErrorMsg>}
-    </FormContainer>
-  )
-
   return (
-    <MainContainer>
-      <LoginCard>
-        <Logo
-          src="https://assets.ccbp.in/frontend/react-js/nxt-watch-logo-light-theme-img.png"
-          alt="website logo"
-        />
-        {renderFormItems()}
-      </LoginCard>
-    </MainContainer>
+    <Context.Consumer>
+      {value => {
+        const {isDarkMode} = value
+
+        const renderUserName = () => (
+          <InputContainer>
+            <Label htmlFor="username">USERNAME</Label>
+            <Input
+              isDarkMode={isDarkMode}
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+              placeholder="Username"
+              type="text"
+              id="username"
+            />
+          </InputContainer>
+        )
+
+        const renderPassword = () => (
+          <InputContainer>
+            <Label htmlFor="password">PASSWORD</Label>
+            <Input
+              isDarkMode={isDarkMode}
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              placeholder="Password"
+              type={showPassword ? 'text' : 'password'}
+            />
+          </InputContainer>
+        )
+
+        const renderShowPassword = () => (
+          <ShowPassContainer>
+            <CheckBox
+              onChange={() => setShowPassword(prev => !prev)}
+              id="checkbox"
+              type="checkbox"
+            />
+            <ShowPassText isDarkMode={isDarkMode} htmlFor="checkbox">
+              Show Password
+            </ShowPassText>
+          </ShowPassContainer>
+        )
+
+        const renderFormItems = () => (
+          <FormContainer onSubmit={onSubmit}>
+            {renderUserName()}
+            {renderPassword()}
+            {renderShowPassword()}
+            <LoginButton type="submit">Login</LoginButton>
+            {isError && <ErrorMsg>*{errorMsg}</ErrorMsg>}
+          </FormContainer>
+        )
+
+        const jwtToken = Cookies.get('jwt_token')
+        if (jwtToken !== undefined) {
+          return <Redirect to="/" />
+        }
+
+        return (
+          <MainContainer isDarkMode={isDarkMode}>
+            <LoginCard isDarkMode={isDarkMode}>
+              {isDarkMode ? (
+                <Logo
+                  src="https://assets.ccbp.in/frontend/react-js/nxt-watch-logo-dark-theme-img.png"
+                  alt="website logo"
+                />
+              ) : (
+                <Logo
+                  src="https://assets.ccbp.in/frontend/react-js/nxt-watch-logo-light-theme-img.png"
+                  alt="website logo"
+                />
+              )}
+              {renderFormItems()}
+            </LoginCard>
+            {/* <button onClick={changeTheme} type="button">
+              Theme
+            </button> */}
+          </MainContainer>
+        )
+      }}
+    </Context.Consumer>
   )
 }
 

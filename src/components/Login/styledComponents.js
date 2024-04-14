@@ -22,7 +22,7 @@ export const LoginCard = styled.div`
   padding: 25px;
   border-radius: 8px;
   height: 400px;
-  background-color: ${({isDarkMode}) => (isDarkMode ? '#000000' : '#ffffff')};
+  background-color: ${({isDarkMode}) => console.log(isDarkMode)};
   @media screen and (min-width: 576px) {
     width: 60%;
   }
