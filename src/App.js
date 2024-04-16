@@ -4,6 +4,9 @@ import Login from './components/Login'
 import Context from './context/Context'
 import Home from './components/Home'
 import Headers from './components/Headers'
+import Trending from './components/Trending'
+import Gaming from './components/Gaming'
+import SavedVideos from './components/SavedVideos'
 import './App.css'
 
 // Replace your code here
@@ -23,11 +26,12 @@ class App extends Component {
           <div className="main-container">
             <Switch>
               <Route exact path="/login" component={Login} />
-              <div>
-                <Headers />
-                <div className="routes-container">
-                  <Route exact path="/" component={Home} />
-                </div>
+              <Headers />
+              <div className="routes-container">
+                <Route exact path="/" component={Home} />
+                <Route exact path="/trending" component={Trending} />
+                <Route exact path="/gaming" component={Gaming} />
+                <Route exact path="/saved-videos" component={SavedVideos} />
               </div>
             </Switch>
           </div>
